@@ -5,6 +5,8 @@ services:
     command: sleep infinity
     volumes:
       - ..:/workspaces/java-swing-demo
+      # Windows WSL2 X11 Forwarding
+      # - /tmp/.X11-unix:/tmp/.X11-unix
     
     depends_on:
       mysql:

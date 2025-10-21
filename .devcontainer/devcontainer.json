@@ -9,11 +9,17 @@
 		}
 	},
 	"containerEnv": {
-		"DISPLAY": "host.docker.internal:0.0",
-		"XAUTHORITY": "/root/.Xauthority"
+
+		// MacOS / Linux X11 Forwarding
+		// "DISPLAY": "host.docker.internal:0.0",
+		// "XAUTHORITY": "/root/.Xauthority"
+
+		// Windows WSL2 X11 Forwarding
+		"DISPLAY": "${localEnv:DISPLAY}"    
 	},
 	"mounts": [
-		"source=${localEnv:HOME}/.Xauthority,target=/root/.Xauthority,type=bind,consistency=cached"
+		// Windows WSL2 X11 Forwarding
+		// "source=${localEnv:HOME}/.Xauthority,target=/root/.Xauthority,type=bind,consistency=cached"
 	],
 	"postCreateCommand": "javac -version",
 	"customizations": {
