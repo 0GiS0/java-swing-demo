@@ -7,6 +7,8 @@
 [![LinkedIn Follow](https://img.shields.io/badge/LinkedIn-Sígueme-blue?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/giselatorresbuitrago/)
 [![X Follow](https://img.shields.io/badge/X-Sígueme-black?style=for-the-badge&logo=x&logoColor=white)](https://twitter.com/0GiS0)
 
+**[📖 Español](README.md) | [🇬🇧 English](README.en.md)**
+
 </div>
 
 ![Portada](images/Portada.png)
