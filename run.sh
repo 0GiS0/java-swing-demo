@@ -5,7 +5,8 @@
 cd "$(dirname "$0")/src"
 
 echo "🔨 Compiling Java files..."
-javac -cp ../lib/mysql-connector-j-8.2.0.jar *.java
+# Compile all Java files except tests
+javac -cp ../lib/mysql-connector-j-8.2.0.jar $(find . -name "*.java" ! -name "*Test.java")
 
 if [ $? -eq 0 ]; then
     echo "✓ Compilation successful!"

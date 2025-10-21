@@ -10,8 +10,8 @@
 *.tar.gz
 *.rar
 
-# Exception: Include MySQL JDBC driver
-!lib/mysql-connector-j-*.jar
+# Exception: Include all JAR files in lib/
+!lib/*.jar
 
 # IDEs
 .idea/
