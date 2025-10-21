@@ -1,0 +1,28 @@
+{
+	"name": "☕ Java Swing GUI 🖥️ + MySQL",
+	"dockerComposeFile": "compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/java-swing-demo",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "17"
+		}
+	},
+	"containerEnv": {
+		"DISPLAY": "host.docker.internal:0.0",
+		"XAUTHORITY": "/root/.Xauthority"
+	},
+	"mounts": [
+		"source=${localEnv:HOME}/.Xauthority,target=/root/.Xauthority,type=bind,consistency=cached"
+	],
+	"postCreateCommand": "javac -version",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"codespaces-Contrib.codeswing",
+				"redhat.java",
+				"cweijan.vscode-mysql-client2"
+			]
+		}
+	}
+}
