@@ -11,16 +11,11 @@
 	"containerEnv": {
 
 		// MacOS / Linux X11 Forwarding
-		// "DISPLAY": "host.docker.internal:0.0",
-		// "XAUTHORITY": "/root/.Xauthority"
+		"DISPLAY": "host.docker.internal:0"
 
 		// Windows WSL2 X11 Forwarding
-		"DISPLAY": "${localEnv:DISPLAY}"    
+		// "DISPLAY": "${localEnv:DISPLAY}"    
 	},
-	"mounts": [
-		// Windows WSL2 X11 Forwarding
-		// "source=${localEnv:HOME}/.Xauthority,target=/root/.Xauthority,type=bind,consistency=cached"
-	],
 	"postCreateCommand": "javac -version",
 	"customizations": {
 		"vscode": {
