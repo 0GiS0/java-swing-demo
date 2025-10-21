@@ -1,7 +1,8 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class HelloSwing {
+public class CallForPaperApp {
     private static Controller controller;
 
     public static void main(String[] args) {
@@ -50,16 +51,16 @@ class MainWindow extends JFrame {
         callForPaperButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         callForPaperButton.addActionListener(e -> controller.openCallForPaperForm());
 
-        JButton secondaryButton = new JButton("Open another window 🪟");
-        secondaryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        secondaryButton.addActionListener(e -> controller.openSecondaryWindow());
+        JButton talkListButton = new JButton("Talk List 📋");
+        talkListButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        talkListButton.addActionListener(e -> controller.openSecondaryWindow());
 
         panel.add(Box.createVerticalGlue());
         panel.add(label);
         panel.add(Box.createVerticalStrut(20));
         panel.add(callForPaperButton);
         panel.add(Box.createVerticalStrut(10));
-        panel.add(secondaryButton);
+        panel.add(talkListButton);
         panel.add(Box.createVerticalGlue());
 
         add(panel);
@@ -67,32 +68,144 @@ class MainWindow extends JFrame {
 }
 
 class SecondaryWindow extends JFrame {
+    private DefaultTableModel tableModel;
+
     public SecondaryWindow(Controller controller) {
-        setTitle("🪟 Secondary Window");
+        setTitle("📋 Talk Proposals Management");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(400, 200);
+        setSize(900, 650);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panel.setBackground(new Color(230, 240, 250));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel label = new JLabel("This is a secondary window 👋🏻");
-        label.setFont(new Font("SansSerif", Font.BOLD, 18));
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Title
+        JLabel titleLabel = new JLabel("📝 Review and Approve Talk Proposals");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        JButton button = new JButton("Open another one 🪟");
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.addActionListener(e -> controller.openSecondaryWindow());
+        // Table with proposals
+        String[] columnNames = {"Speaker", "Talk Title", "Duration", "Category", "Level", "Email", "Status"};
+        Object[][] data = {
+                {"John Smith", "Introduction to Docker", "30 minutes", "DevOps", "Beginner", "john@email.com", "Pending"},
+                {"Maria Garcia", "Advanced React Patterns", "45 minutes", "Frontend", "Advanced", "maria@email.com", "Pending"},
+                {"Carlos López", "Machine Learning Basics", "60 minutes", "AI/ML", "Intermediate", "carlos@email.com", "Pending"},
+                {"Ana Rodríguez", "Spring Boot Microservices", "45 minutes", "Backend", "Intermediate", "ana@email.com", "Pending"},
+                {"David Chen", "Kubernetes in Production", "60 minutes", "DevOps", "Advanced", "david@email.com", "Pending"},
+                {"Sophie Dubois", "Vue.js Best Practices", "30 minutes", "Frontend", "Beginner", "sophie@email.com", "Pending"},
+                {"Miguel Santos", "MongoDB for Developers", "45 minutes", "Backend", "Intermediate", "miguel@email.com", "Pending"},
+                {"Lisa Wong", "Mobile App Security", "30 minutes", "Mobile", "Advanced", "lisa@email.com", "Pending"},
+        };
 
-        panel.add(Box.createVerticalGlue());
-        panel.add(label);
-        panel.add(Box.createVerticalStrut(15));
-        panel.add(button);
-        panel.add(Box.createVerticalGlue());
+        tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        add(panel);
+        JTable table = new JTable(tableModel);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        table.setRowHeight(25);
+        table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
+        table.getTableHeader().setBackground(new Color(70, 130, 180));
+        table.getTableHeader().setForeground(Color.WHITE);
+        table.setSelectionBackground(new Color(100, 150, 200));
+        table.setGridColor(new Color(200, 200, 200));
+
+        // Set column widths
+        table.getColumnModel().getColumn(6).setPreferredWidth(80);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Bottom panel with buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+        JLabel infoLabel = new JLabel("Total proposals: " + data.length);
+        infoLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JButton approveButton = new JButton("Approve ✓");
+        approveButton.setBackground(new Color(76, 175, 80));
+        approveButton.setForeground(Color.WHITE);
+        approveButton.setOpaque(true);
+        approveButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String speaker = (String) table.getValueAt(selectedRow, 0);
+                String title = (String) table.getValueAt(selectedRow, 1);
+                tableModel.setValueAt("Approved", selectedRow, 6);
+                table.repaint();
+                JOptionPane.showMessageDialog(this, 
+                    "Approved!\n\nSpeaker: " + speaker + "\nTalk: " + title, 
+                    "Proposal Approved", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a proposal first", "No Selection", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        JButton rejectButton = new JButton("Reject ✕");
+        rejectButton.setBackground(new Color(244, 67, 54));
+        rejectButton.setForeground(Color.WHITE);
+        rejectButton.setOpaque(true);
+        rejectButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String speaker = (String) table.getValueAt(selectedRow, 0);
+                String title = (String) table.getValueAt(selectedRow, 1);
+                tableModel.setValueAt("Rejected", selectedRow, 6);
+                table.repaint();
+                JOptionPane.showMessageDialog(this, 
+                    "Rejected!\n\nSpeaker: " + speaker + "\nTalk: " + title, 
+                    "Proposal Rejected", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a proposal first", "No Selection", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        JButton detailsButton = new JButton("View Details 👁️");
+        detailsButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String speaker = (String) table.getValueAt(selectedRow, 0);
+                String title = (String) table.getValueAt(selectedRow, 1);
+                String duration = (String) table.getValueAt(selectedRow, 2);
+                String category = (String) table.getValueAt(selectedRow, 3);
+                String level = (String) table.getValueAt(selectedRow, 4);
+                String email = (String) table.getValueAt(selectedRow, 5);
+                JOptionPane.showMessageDialog(this, 
+                    "Speaker: " + speaker + "\nEmail: " + email + "\nTalk: " + title + 
+                    "\nDuration: " + duration + "\nCategory: " + category + "\nLevel: " + level +
+                    "\n\nAbstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit...", 
+                    "Proposal Details", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a proposal first", "No Selection", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        JButton closeButton = new JButton("Close ✕");
+        closeButton.addActionListener(e -> dispose());
+
+        buttonPanel.add(infoLabel);
+        buttonPanel.add(Box.createHorizontalGlue());
+        buttonPanel.add(detailsButton);
+        buttonPanel.add(Box.createHorizontalStrut(8));
+        buttonPanel.add(approveButton);
+        buttonPanel.add(Box.createHorizontalStrut(8));
+        buttonPanel.add(rejectButton);
+        buttonPanel.add(Box.createHorizontalStrut(8));
+        buttonPanel.add(closeButton);
+
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
     }
 }
 
