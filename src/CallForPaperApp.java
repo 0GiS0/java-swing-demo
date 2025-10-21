@@ -69,6 +69,7 @@ class MainWindow extends JFrame {
 
 class SecondaryWindow extends JFrame {
     private DefaultTableModel tableModel;
+    private JTable table;
 
     public SecondaryWindow(Controller controller) {
         setTitle("📋 Talk Proposals Management");
@@ -87,26 +88,19 @@ class SecondaryWindow extends JFrame {
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Table with proposals
-        String[] columnNames = {"Speaker", "Talk Title", "Duration", "Category", "Level", "Email", "Status"};
-        Object[][] data = {
-                {"John Smith", "Introduction to Docker", "30 minutes", "DevOps", "Beginner", "john@email.com", "Pending"},
-                {"Maria Garcia", "Advanced React Patterns", "45 minutes", "Frontend", "Advanced", "maria@email.com", "Pending"},
-                {"Carlos López", "Machine Learning Basics", "60 minutes", "AI/ML", "Intermediate", "carlos@email.com", "Pending"},
-                {"Ana Rodríguez", "Spring Boot Microservices", "45 minutes", "Backend", "Intermediate", "ana@email.com", "Pending"},
-                {"David Chen", "Kubernetes in Production", "60 minutes", "DevOps", "Advanced", "david@email.com", "Pending"},
-                {"Sophie Dubois", "Vue.js Best Practices", "30 minutes", "Frontend", "Beginner", "sophie@email.com", "Pending"},
-                {"Miguel Santos", "MongoDB for Developers", "45 minutes", "Backend", "Intermediate", "miguel@email.com", "Pending"},
-                {"Lisa Wong", "Mobile App Security", "30 minutes", "Mobile", "Advanced", "lisa@email.com", "Pending"},
-        };
-
-        tableModel = new DefaultTableModel(data, columnNames) {
+        String[] columnNames = {"ID", "Speaker", "Talk Title", "Duration", "Category", "Level", "Email", "Status"};
+        
+        tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        JTable table = new JTable(tableModel);
+        // Load data from database
+        loadProposalsFromDatabase();
+
+        table = new JTable(tableModel);
         table.setFont(new Font("SansSerif", Font.PLAIN, 11));
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
@@ -116,7 +110,8 @@ class SecondaryWindow extends JFrame {
         table.setGridColor(new Color(200, 200, 200));
 
         // Set column widths
-        table.getColumnModel().getColumn(6).setPreferredWidth(80);
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        table.getColumnModel().getColumn(7).setPreferredWidth(80);
 
         JScrollPane scrollPane = new JScrollPane(table);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -126,7 +121,7 @@ class SecondaryWindow extends JFrame {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JLabel infoLabel = new JLabel("Total proposals: " + data.length);
+        JLabel infoLabel = new JLabel("Total proposals: " + tableModel.getRowCount());
         infoLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
         JButton approveButton = new JButton("Approve ✓");
@@ -136,14 +131,20 @@ class SecondaryWindow extends JFrame {
         approveButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                String speaker = (String) table.getValueAt(selectedRow, 0);
-                String title = (String) table.getValueAt(selectedRow, 1);
-                tableModel.setValueAt("Approved", selectedRow, 6);
-                table.repaint();
-                JOptionPane.showMessageDialog(this, 
-                    "Approved!\n\nSpeaker: " + speaker + "\nTalk: " + title, 
-                    "Proposal Approved", 
-                    JOptionPane.INFORMATION_MESSAGE);
+                int proposalId = (int) table.getValueAt(selectedRow, 0);
+                String speaker = (String) table.getValueAt(selectedRow, 1);
+                String title = (String) table.getValueAt(selectedRow, 2);
+                
+                if (ProposalDAO.updateProposalStatus(proposalId, "approved")) {
+                    tableModel.setValueAt("approved", selectedRow, 7);
+                    table.repaint();
+                    JOptionPane.showMessageDialog(this, 
+                        "Approved!\n\nSpeaker: " + speaker + "\nTalk: " + title, 
+                        "Proposal Approved", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error updating database", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a proposal first", "No Selection", JOptionPane.WARNING_MESSAGE);
             }
@@ -156,14 +157,20 @@ class SecondaryWindow extends JFrame {
         rejectButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                String speaker = (String) table.getValueAt(selectedRow, 0);
-                String title = (String) table.getValueAt(selectedRow, 1);
-                tableModel.setValueAt("Rejected", selectedRow, 6);
-                table.repaint();
-                JOptionPane.showMessageDialog(this, 
-                    "Rejected!\n\nSpeaker: " + speaker + "\nTalk: " + title, 
-                    "Proposal Rejected", 
-                    JOptionPane.INFORMATION_MESSAGE);
+                int proposalId = (int) table.getValueAt(selectedRow, 0);
+                String speaker = (String) table.getValueAt(selectedRow, 1);
+                String title = (String) table.getValueAt(selectedRow, 2);
+                
+                if (ProposalDAO.updateProposalStatus(proposalId, "rejected")) {
+                    tableModel.setValueAt("rejected", selectedRow, 7);
+                    table.repaint();
+                    JOptionPane.showMessageDialog(this, 
+                        "Rejected!\n\nSpeaker: " + speaker + "\nTalk: " + title, 
+                        "Proposal Rejected", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error updating database", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a proposal first", "No Selection", JOptionPane.WARNING_MESSAGE);
             }
@@ -173,21 +180,32 @@ class SecondaryWindow extends JFrame {
         detailsButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                String speaker = (String) table.getValueAt(selectedRow, 0);
-                String title = (String) table.getValueAt(selectedRow, 1);
-                String duration = (String) table.getValueAt(selectedRow, 2);
-                String category = (String) table.getValueAt(selectedRow, 3);
-                String level = (String) table.getValueAt(selectedRow, 4);
-                String email = (String) table.getValueAt(selectedRow, 5);
-                JOptionPane.showMessageDialog(this, 
-                    "Speaker: " + speaker + "\nEmail: " + email + "\nTalk: " + title + 
-                    "\nDuration: " + duration + "\nCategory: " + category + "\nLevel: " + level +
-                    "\n\nAbstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit...", 
-                    "Proposal Details", 
-                    JOptionPane.INFORMATION_MESSAGE);
+                int proposalId = (int) table.getValueAt(selectedRow, 0);
+                TalkProposal proposal = ProposalDAO.getProposalById(proposalId);
+                
+                if (proposal != null) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Speaker: " + proposal.getSpeakerName() + "\n" +
+                        "Email: " + proposal.getEmail() + "\n" +
+                        "Talk: " + proposal.getTalkTitle() + "\n" +
+                        "Duration: " + proposal.getDuration() + "\n" +
+                        "Category: " + proposal.getCategory() + "\n" +
+                        "Level: " + proposal.getExperienceLevel() + "\n" +
+                        "Status: " + proposal.getStatus() + "\n\n" +
+                        "Abstract:\n" + proposal.getAbstractText(), 
+                        "Proposal Details", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a proposal first", "No Selection", JOptionPane.WARNING_MESSAGE);
             }
+        });
+
+        JButton refreshButton = new JButton("Refresh 🔄");
+        refreshButton.addActionListener(e -> {
+            tableModel.setRowCount(0);
+            loadProposalsFromDatabase();
+            infoLabel.setText("Total proposals: " + tableModel.getRowCount());
         });
 
         JButton closeButton = new JButton("Close ✕");
@@ -195,6 +213,8 @@ class SecondaryWindow extends JFrame {
 
         buttonPanel.add(infoLabel);
         buttonPanel.add(Box.createHorizontalGlue());
+        buttonPanel.add(refreshButton);
+        buttonPanel.add(Box.createHorizontalStrut(8));
         buttonPanel.add(detailsButton);
         buttonPanel.add(Box.createHorizontalStrut(8));
         buttonPanel.add(approveButton);
@@ -206,6 +226,31 @@ class SecondaryWindow extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
+    }
+
+    private void loadProposalsFromDatabase() {
+        java.util.List<TalkProposal> proposals = ProposalDAO.getAllProposals();
+        
+        for (TalkProposal proposal : proposals) {
+            Object[] row = {
+                proposal.getId(),
+                proposal.getSpeakerName(),
+                proposal.getTalkTitle(),
+                proposal.getDuration(),
+                proposal.getCategory(),
+                proposal.getExperienceLevel(),
+                proposal.getEmail(),
+                proposal.getStatus()
+            };
+            tableModel.addRow(row);
+        }
+        
+        if (proposals.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "No proposals found in database.\nMake sure MySQL is running and the database is initialized.", 
+                "Database Connection Info", 
+                JOptionPane.WARNING_MESSAGE);
+        }
     }
 }
 

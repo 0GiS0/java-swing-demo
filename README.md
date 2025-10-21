@@ -73,6 +73,53 @@ Para invocar este proyecto, siga estos pasos:
 
 ```bash
 cd src
-java -c HelloSwing.java
-java HelloSwing
+javac -cp ../lib/mysql-connector-j-8.2.0.jar *.java
+java -cp .:../lib/mysql-connector-j-8.2.0.jar CallForPaperApp
 ``` 
+
+O simplemente ejecute:
+
+```bash
+./run.sh
+```
+
+## Call for Paper Application with MySQL JDBC
+
+Este proyecto ahora incluye una aplicación completa de "Call for Paper" con integración a MySQL usando JDBC (forma clásica de conectar Java con bases de datos).
+
+### Características
+
+- **Swing GUI** - Interfaz gráfica con Java Swing
+- **MySQL Database** - Base de datos en contenedor Docker
+- **JDBC Connection** - Conexión a MySQL usando JDBC puro (sin ORM)
+- **Data Management** - Crear, leer, actualizar propuestas de charlas
+
+### Estructura
+
+```
+src/
+├── CallForPaperApp.java      # Aplicación principal con UI
+├── DatabaseConnection.java   # Manejo de conexiones JDBC
+├── TalkProposal.java         # Modelo de datos
+└── ProposalDAO.java          # Data Access Object
+
+lib/
+└── mysql-connector-j-8.2.0.jar  # Driver JDBC de MySQL
+
+.devcontainer/
+├── docker-compose.yml        # Configuración de servicios
+├── init.sql                  # Script de inicialización de BD
+└── Dockerfile               # Imagen del contenedor
+```
+
+### Base de Datos
+
+El contenedor incluye MySQL 8.0 con:
+- Base de datos: `callforpaper`
+- Usuario: `developer`
+- Contraseña: `developer123`
+- Host (desde el contenedor): `mysql`
+
+### Para más información
+
+Ver el archivo [JDBC_GUIDE.md](JDBC_GUIDE.md) para documentación detallada sobre la implementación JDBC.

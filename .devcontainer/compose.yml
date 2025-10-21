@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/java-swing-demo
+    
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - callforpaper-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: callforpaper
+      MYSQL_USER: developer
+      MYSQL_PASSWORD: developer123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - callforpaper-network
+
+volumes:
+  mysql-data:
+
+networks:
+  callforpaper-network:
