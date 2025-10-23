@@ -3,7 +3,7 @@
 # Compile and run CallForPaperApp with MySQL JDBC Driver (WSL2 version)
 # This version is optimized for Windows Subsystem for Linux 2 (WSL2)
 
-cd "$(dirname "$0")/src"
+cd "$(dirname "$0")/../src"
 
 echo "🔨 Compiling Java files..."
 # Compile all Java files except tests

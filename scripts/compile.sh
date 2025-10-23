@@ -2,7 +2,7 @@
 
 # Compile CallForPaperApp with MySQL JDBC Driver
 
-cd "$(dirname "$0")/src"
+cd "$(dirname "$0")/../src"
 
 echo "🔨 Compiling Java files..."
 # Compile all Java files except tests
@@ -12,10 +12,10 @@ if [ $? -eq 0 ]; then
     echo "✓ Compilation successful!"
     echo ""
     echo "📝 To run the application, execute:"
-    echo "   ./run.sh"
+    echo "   ./scripts/run.sh"
     echo ""
     echo "To run tests, execute:"
-    echo "   ./test.sh"
+    echo "   ./scripts/test.sh"
 else
     echo "✗ Compilation failed!"
     exit 1

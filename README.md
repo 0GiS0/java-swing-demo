@@ -86,13 +86,13 @@ xeyes
 Una vez que tengas el contenedor abierto en VS Code, simplemente ejecuta:
 
 ```bash
-./run.sh
+./scripts/run.sh
 ```
 
 Si estás en WSL2/WSLg, ejecuta:
 
 ```bash
-./run-wsl2.sh
+./scripts/run-wsl2.sh
 ```
 
 Este script compila y ejecuta automáticamente la aplicación.
@@ -148,12 +148,22 @@ java-swing-demo/
 │   ├── docker-compose.yml           # Servicios (Java + MySQL)
 │   └── init.sql                     # Script de inicialización de BD
 │
-├── compile.sh                        # 🔨 Script para compilar
-├── run.sh                            # 🚀 Script para ejecutar
-├── test.sh                           # ✅ Script para tests
-├── compile-wsl2.sh                   # 🪟 Script para compilar en WSL2
-├── run-wsl2.sh                       # 🪟 Script para ejecutar en WSL2
-├── test-wsl2.sh                      # 🪟 Script para tests en WSL2
+├── scripts/                          # 📂 Directorio de scripts
+│   ├── compile.sh                   # 🔨 Script para compilar
+│   ├── run.sh                       # 🚀 Script para ejecutar
+│   ├── test.sh                      # ✅ Script para tests
+│   ├── compile-wsl2.sh              # 🪟 Script para compilar en WSL2
+│   ├── run-wsl2.sh                  # 🪟 Script para ejecutar en WSL2
+│   ├── test-wsl2.sh                 # 🪟 Script para tests en WSL2
+│   ├── build.sh                     # 🏗️ Script para construir JAR
+│   ├── build-and-run.sh             # 🏗️ Script para construir y ejecutar
+│   ├── run-local.sh                 # 🖥️ Script para ejecutar localmente
+│   ├── create-macos-app.sh          # 🍎 Script para crear .app de macOS
+│   ├── package-release.sh           # 📦 Script para empaquetar distribución
+│   ├── configure.sh                 # ⚙️ Script para configurar
+│   ├── install-mac.sh               # 📦 Script para instalar en macOS
+│   └── quick-start.sh               # 🚀 Guía rápida interactiva
+│
 └── README.md                         # Este archivo
 ```
 
@@ -185,13 +195,13 @@ CREATE TABLE talks (
 Para ejecutar los tests unitarios:
 
 ```bash
-./test.sh
+./scripts/test.sh
 ```
 
 O en WSL2:
 
 ```bash
-./test-wsl2.sh
+./scripts/test-wsl2.sh
 ```
 
 Los tests incluyen:

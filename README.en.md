@@ -86,13 +86,13 @@ You should see the eyes 👀 following your cursor!
 Once you have the container open in VS Code, simply run:
 
 ```bash
-./run.sh
+./scripts/run.sh
 ```
 
 If you're on WSL2/WSLg, run:
 
 ```bash
-./run-wsl2.sh
+./scripts/run-wsl2.sh
 ```
 
 This script compiles and runs the application automatically.
@@ -148,12 +148,22 @@ java-swing-demo/
 │   ├── docker-compose.yml           # Services (Java + MySQL)
 │   └── init.sql                     # Database initialization script
 │
-├── compile.sh                        # 🔨 Compile script
-├── run.sh                            # 🚀 Run script
-├── test.sh                           # ✅ Tests script
-├── compile-wsl2.sh                   # 🪟 Compile script for WSL2
-├── run-wsl2.sh                       # 🪟 Run script for WSL2
-├── test-wsl2.sh                      # 🪟 Tests script for WSL2
+├── scripts/                          # 📂 Scripts directory
+│   ├── compile.sh                   # 🔨 Compile script
+│   ├── run.sh                       # 🚀 Run script
+│   ├── test.sh                      # ✅ Tests script
+│   ├── compile-wsl2.sh              # 🪟 Compile script for WSL2
+│   ├── run-wsl2.sh                  # 🪟 Run script for WSL2
+│   ├── test-wsl2.sh                 # 🪟 Tests script for WSL2
+│   ├── build.sh                     # 🏗️ Build JAR script
+│   ├── build-and-run.sh             # 🏗️ Build and run script
+│   ├── run-local.sh                 # 🖥️ Run locally script
+│   ├── create-macos-app.sh          # 🍎 Create macOS .app script
+│   ├── package-release.sh           # 📦 Package release script
+│   ├── configure.sh                 # ⚙️ Configuration script
+│   ├── install-mac.sh               # 📦 macOS installation script
+│   └── quick-start.sh               # 🚀 Interactive quick start guide
+│
 └── README.md                         # This file
 ```
 
@@ -185,13 +195,13 @@ CREATE TABLE talks (
 To run the unit tests:
 
 ```bash
-./test.sh
+./scripts/test.sh
 ```
 
 Or on WSL2:
 
 ```bash
-./test-wsl2.sh
+./scripts/test-wsl2.sh
 ```
 
 The tests include:

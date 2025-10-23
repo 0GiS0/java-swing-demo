@@ -3,7 +3,7 @@
 # Run JUnit tests for CallForPaperApp (WSL2 version)
 # This version is optimized for Windows Subsystem for Linux 2 (WSL2)
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 CLASSPATH="lib/mysql-connector-j-8.2.0.jar:lib/junit-4.13.2.jar:lib/hamcrest-2.2.jar:lib/mockito-core-4.8.0.jar:lib/byte-buddy-1.12.16.jar:lib/objenesis-3.2.jar:src:test"
 
