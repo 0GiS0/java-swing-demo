@@ -1,0 +1,113 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/build.sh"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "Build and Run",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/build-and-run.sh"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Run Local",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/run-local.sh"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/test.sh"],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Configure",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/configure.sh"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Create macOS App",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/create-macos-app.sh"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Package Release",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/package-release.sh"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Install macOS",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/install-mac.sh"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}
