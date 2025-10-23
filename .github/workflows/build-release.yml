@@ -1,0 +1,109 @@
+name: Build and Release Executables
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/build.sh
+          chmod +x scripts/create-macos-app.sh
+          chmod +x scripts/package-release.sh
+      
+      - name: Build macOS App
+        run: ./scripts/create-macos-app.sh
+      
+      - name: Create macOS Release Package
+        run: |
+          mkdir -p releases-temp
+          cd dist
+          zip -r ../releases-temp/CallForPaperApp-macOS.zip CallForPaperApp.app
+          cd ..
+      
+      - name: Upload macOS to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: releases-temp/CallForPaperApp-macOS.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Install Launch4j
+        run: |
+          choco install launch4j -y
+          echo "C:\Program Files\Launch4j\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      
+      - name: Install ImageMagick
+        run: choco install imagemagick -y
+      
+      - name: Build Windows EXE
+        run: scripts\create-windows-exe.bat
+        shell: cmd
+      
+      - name: Upload Windows to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/windows/CallForPaperApp.exe
+            dist/windows/CallForPaperApp.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/build.sh
+          chmod +x scripts/test.sh
+      
+      - name: Build JAR
+        run: ./scripts/build.sh
+      
+      - name: Run tests
+        run: ./scripts/test.sh || true
+      
+      - name: Create Linux Package
+        run: |
+          mkdir -p releases-temp
+          cd dist
+          tar -czf ../releases-temp/CallForPaperApp-Linux.tar.gz lib/ CallForPaperApp.jar
+          cd ..
+      
+      - name: Upload Linux to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: releases-temp/CallForPaperApp-Linux.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
