@@ -1,0 +1,1 @@
+Every time you do a change in this repo you have to compile the code and execute the tests to make sure everything is working as expected.
