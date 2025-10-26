@@ -120,6 +120,37 @@
                 "focus": false,
                 "panel": "shared"
             }
+        },
+        {
+            "label": "Setup XQuartz (macOS)",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/setup-xquartz.sh"],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        },
+        {
+            "label": "Cleanup XQuartz (macOS)",
+            "type": "shell",
+            "command": "bash",
+            "args": ["scripts/cleanup-xquartz.sh"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
         }
     ]
 }
