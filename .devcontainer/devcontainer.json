@@ -5,8 +5,12 @@
 	"workspaceFolder": "/workspaces/java-swing-demo",
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "8"
+			"installMaven": true,
+			"version": "8",
+			"jdkDistro": "ms",			
+			"mavenVersion": "3.5.4"			
 		}
+		
 	},
 	"containerEnv": {
 
@@ -16,7 +20,7 @@
 		// Windows WSL2 X11 Forwarding
 		// "DISPLAY": "${localEnv:DISPLAY}"    
 	},
-	"postCreateCommand": "javac -version",
+	"postCreateCommand": "javac -version && mvn clean install -q",
 	"customizations": {
 		"vscode": {
 			"extensions": [

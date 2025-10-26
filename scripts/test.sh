@@ -1,35 +1,58 @@
 #!/bin/bash
 
-# Run JUnit tests for CallForPaperApp
+# Run JUnit and Cucumber tests for CallForPaperApp
 
 cd "$(dirname "$0")/.."
 
-CLASSPATH="lib/mysql-connector-j-8.2.0.jar:lib/junit-4.13.2.jar:lib/hamcrest-2.2.jar:lib/mockito-core-4.8.0.jar:lib/byte-buddy-1.12.16.jar:lib/objenesis-3.2.jar:src:test"
+# Classpath with all necessary libraries
+CLASSPATH="lib/*:src:src/test/java:src/test/resources:test"
+
+echo "🔨 Building classpath..."
+LIBCP=$(ls lib/*.jar | tr '\n' ':' | sed 's/:$//')
 
 echo "🔨 Compiling application code..."
-javac -cp lib/mysql-connector-j-8.2.0.jar $(find src -name "*.java" ! -name "*Test.java")
+javac -cp "$LIBCP" $(find src -maxdepth 1 -name "*.java")
 
 if [ $? -ne 0 ]; then
     echo "✗ Application compilation failed!"
     exit 1
 fi
 
-echo "🔨 Compiling tests..."
-javac -cp $CLASSPATH $(find test -name "*.java")
+echo "🔨 Compiling step definitions and test runners..."
+javac -cp "$LIBCP:src:src/test/java:src/test/resources:test" $(find src/test/java -name "*.java")
 
 if [ $? -ne 0 ]; then
-    echo "✗ Test compilation failed!"
+    echo "✗ Step definitions compilation failed!"
+    exit 1
+fi
+
+echo "🔨 Compiling traditional unit tests..."
+javac -cp "$LIBCP:src:test" $(find test -name "*.java")
+
+if [ $? -ne 0 ]; then
+    echo "✗ Traditional unit tests compilation failed!"
     exit 1
 fi
 
 echo "✓ Compilation successful!"
 echo ""
-echo "🧪 Running tests..."
+echo "🧪 Running unit tests..."
 echo ""
 
-# Run all tests (extract test class names from test files)
+# Run traditional unit tests
 TEST_CLASSES=$(find test -name "*Test.java" -exec basename {} .java \; | tr '\n' ' ')
-java -cp $CLASSPATH org.junit.runner.JUnitCore $TEST_CLASSES
+if [ -n "$TEST_CLASSES" ]; then
+    java -cp "$LIBCP:src:test" org.junit.runner.JUnitCore $TEST_CLASSES
+else
+    echo "ℹ️  No traditional unit tests found"
+fi
 
 echo ""
-echo "✓ Tests completed!"
+echo "🧪 Running Cucumber BDD tests..."
+echo ""
+
+# Run Cucumber tests
+java -cp "$LIBCP:src:src/test/java:src/test/resources" org.junit.runner.JUnitCore CucumberRunnerTest
+
+echo ""
+echo "✓ All tests completed!"
