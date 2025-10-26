@@ -24,13 +24,22 @@ CREATE TABLE IF NOT EXISTS proposal_notes (
     FOREIGN KEY (proposal_id) REFERENCES talk_proposals(id) ON DELETE CASCADE
 );
 
--- Insert sample data
+-- Insert sample data for testing
+-- ID 1: Used by "Retrieve a proposal by ID" test (expects "Gisela Torres")
+INSERT INTO talk_proposals (id, speaker_name, talk_title, abstract, duration, category, experience_level, email, status) VALUES
+(1, 'Gisela Torres', 'Introduction to Generative AI', 'Discover how Generative AI is transforming development workflows and best practices for integration', '60 minutes', 'AI', 'Advanced', 'giselatb@outlook.com', 'pending');
+
+-- ID 2: Used by "Reject a pending proposal" test (needs to stay in pending status)
+INSERT INTO talk_proposals (id, speaker_name, talk_title, abstract, duration, category, experience_level, email, status) VALUES
+(2, 'Gisela Torres', 'Building Custom MCP Servers', 'Learn how to create and deploy Model Context Protocol servers for advanced AI integrations', '45 minutes', 'Backend', 'Intermediate', 'giselatb@outlook.com', 'pending');
+
+-- ID 3: Used by "Cannot change status of an already approved proposal" test (needs to be approved)
+INSERT INTO talk_proposals (id, speaker_name, talk_title, abstract, duration, category, experience_level, email, status) VALUES
+(3, 'Gisela Torres', 'Azure DevOps for Platform Engineering', 'Automate your entire development pipeline with Azure DevOps and CI/CD best practices', '60 minutes', 'DevOps', 'Advanced', 'giselatb@outlook.com', 'approved');
+
+-- Additional proposals for general tests
 INSERT INTO talk_proposals (speaker_name, talk_title, abstract, duration, category, experience_level, email, status) VALUES
-('Gisela Torres', 'Introduction to Docker', 'Learn the basics of Docker containerization', '30 minutes', 'DevOps', 'Beginner', 'john@email.com', 'pending'),
-('Maria Garcia', 'Advanced React Patterns', 'Deep dive into advanced React patterns and best practices', '45 minutes', 'Frontend', 'Advanced', 'maria@email.com', 'pending'),
-('Carlos López', 'Machine Learning Basics', 'Introduction to machine learning concepts using Python', '60 minutes', 'AI/ML', 'Intermediate', 'carlos@email.com', 'pending'),
-('Ana Rodríguez', 'Spring Boot Microservices', 'Building microservices with Spring Boot and Docker', '45 minutes', 'Backend', 'Intermediate', 'ana@email.com', 'pending'),
-('David Chen', 'Kubernetes in Production', 'Real-world Kubernetes deployment strategies', '60 minutes', 'DevOps', 'Advanced', 'david@email.com', 'pending'),
-('Sophie Dubois', 'Vue.js Best Practices', 'Writing maintainable Vue.js applications', '30 minutes', 'Frontend', 'Beginner', 'sophie@email.com', 'pending'),
-('Miguel Santos', 'MongoDB for Developers', 'Document databases and MongoDB fundamentals', '45 minutes', 'Backend', 'Intermediate', 'miguel@email.com', 'pending'),
-('Lisa Wong', 'Mobile App Security', 'Security best practices for mobile applications', '30 minutes', 'Mobile', 'Advanced', 'lisa@email.com', 'pending');
+('Gisela Torres', 'GitHub Copilot: From Basics to Advanced', 'Master GitHub Copilot for AI-powered code generation and productivity', '45 minutes', 'AI', 'Beginner', 'giselatb@outlook.com', 'pending'),
+('Gisela Torres', 'GitHub Platform: Enterprise Solutions', 'Explore GitHub Enterprise features for scalable collaborative development', '60 minutes', 'Platform', 'Advanced', 'giselatb@outlook.com', 'pending'),
+('Gisela Torres', 'Platform Engineering Best Practices', 'Build robust internal developer platforms that scale with your organization', '50 minutes', 'DevOps', 'Advanced', 'giselatb@outlook.com', 'pending'),
+('Gisela Torres', 'AI-Driven Development with GitHub Copilot and LLMs', 'Combine GitHub Copilot with Large Language Models for next-generation development', '45 minutes', 'AI', 'Intermediate', 'giselatb@outlook.com', 'pending');

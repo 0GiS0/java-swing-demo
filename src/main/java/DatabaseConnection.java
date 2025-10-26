@@ -4,7 +4,7 @@ public class DatabaseConnection {
     // ============================================
     // 📝 VALORES POR DEFECTO EMBEBIDOS
     // ============================================
-    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_HOST = "mysql";
     private static final int DEFAULT_PORT = 3306;
     private static final String DEFAULT_NAME = "callforpaper";
     private static final String DEFAULT_USER = "developer";

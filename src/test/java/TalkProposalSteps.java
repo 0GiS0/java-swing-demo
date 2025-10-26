@@ -21,20 +21,18 @@ public class TalkProposalSteps {
         }
     }
 
-    @When("I create a proposal with the following data:")
-    public void iCreateAProposalWithData() {
-        // For now, we'll create a simple proposal
-        // In a real scenario, you'd use DataTable
+    @When("I create a proposal with speaker {string}")
+    public void iCreateAProposalWithSpeaker(String speaker) {
         try {
             currentProposal = new TalkProposal(
                 0,
-                "John Doe",
+                speaker,
                 "Sample Talk",
                 "This is a sample abstract",
                 "45 minutes",
                 "Frontend",
                 "Intermediate",
-                "john@example.com",
+                speaker.toLowerCase().replace(" ", ".") + "@example.com",
                 "pending"
             );
             operationSuccess = ProposalDAO.insertProposal(currentProposal);
