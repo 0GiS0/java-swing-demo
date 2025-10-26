@@ -6,7 +6,51 @@
 
 version: 2
 updates:
- - package-ecosystem: "devcontainers"
-   directory: "/"
-   schedule:
-     interval: weekly
+  # Dev Container updates
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: weekly
+    target-branch: "main"
+
+  # Maven dependencies updates (Java)
+  # Monitors the pom.xml on main branch
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: "monday"
+      time: "03:00"
+    target-branch: "main"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "0GiS0"
+    labels:
+      - "dependencies"
+      - "java"
+    commit-message:
+      prefix: "deps(maven)"
+      prefix-development: "deps(dev)"
+      include: "scope"
+
+  # Maven dependencies updates (Java) - Cucumber branch
+  # Monitors the pom.xml on cucumber branch for BDD tests
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: "tuesday"
+      time: "03:00"
+    target-branch: "cucumber"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "0GiS0"
+    labels:
+      - "dependencies"
+      - "java"
+      - "cucumber"
+      - "bdd"
+    commit-message:
+      prefix: "deps(maven-cucumber)"
+      prefix-development: "deps(dev-cucumber)"
+      include: "scope"
