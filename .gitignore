@@ -10,8 +10,8 @@
 *.tar.gz
 *.rar
 
-# Exception: Include all JAR files in lib/
-!lib/*.jar
+# Exception: Do NOT include JAR files (Maven manages dependencies)
+# If needed for any reason, explicitly add exceptions here
 
 # IDEs
 .idea/
