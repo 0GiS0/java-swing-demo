@@ -1,0 +1,166 @@
+name: 🧪 Test and Report
+
+on:
+  push:
+    branches:
+      - main
+      - cucumber
+      - develop
+  pull_request:
+    branches:
+      - main
+      - cucumber
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: 🔍 Run Tests and Generate Reports
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/*.sh
+      
+      - name: 🧪 Run Unit Tests
+        run: mvn clean test -Dtests=unit -B -V
+        continue-on-error: true
+      
+      - name: 🥒 Run BDD Tests
+        run: mvn test -Dtests=bdd -B -V
+        continue-on-error: true
+      
+      - name: 📊 Generate HTML and Markdown Reports
+        run: |
+          ./scripts/create-report-index.sh
+        continue-on-error: true
+      
+      - name: 📋 Display Test Summary
+        run: |
+          echo "## 📊 Test Results Summary"
+          if [ -f target/test-reports/TEST_REPORT.md ]; then
+            echo ""
+            echo "### Overall Statistics"
+            grep -A 10 "Executive Summary" target/test-reports/TEST_REPORT.md || echo "Report not available"
+          fi
+        if: always()
+      
+      - name: 📁 Upload Test Reports as Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: target/test-reports/
+          retention-days: 30
+      
+      - name: 📄 Upload Surefire Reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+          retention-days: 30
+      
+      - name: 🥒 Upload Cucumber Reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cucumber-reports
+          path: target/cucumber-json-reports/
+          retention-days: 30
+      
+      - name: 📊 Publish Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: target/surefire-reports/TEST-*.xml
+          check_name: JUnit Test Results
+          comment_mode: always
+      
+      - name: 🎯 Comment on PR with Test Results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const mdReportPath = 'target/test-reports/TEST_REPORT.md';
+            
+            if (fs.existsSync(mdReportPath)) {
+              const mdReport = fs.readFileSync(mdReportPath, 'utf8');
+              
+              // Extract summary section
+              const summaryMatch = mdReport.match(/## 📊 Executive Summary[\s\S]*?---/);
+              const summaryContent = summaryMatch ? summaryMatch[0] : 'Report not fully available';
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🧪 Test Results\n\n${summaryContent}\n\n**Full Report**: See the artifacts section for detailed reports.`
+              });
+            }
+      
+      - name: 🚨 Fail if tests failed
+        if: always()
+        run: |
+          FAILED=$(grep -o '"status": "failed"' target/cucumber-json-reports/cucumber.json 2>/dev/null | wc -l || echo "0")
+          SUREFIRE_FAILED=$(grep -oP 'failures="\K[^"]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1 || echo "0")
+          
+          if [ "$FAILED" -gt "0" ] || [ "$SUREFIRE_FAILED" -gt "0" ]; then
+            echo "❌ Tests failed - Cucumber failures: $FAILED, Surefire failures: $SUREFIRE_FAILED"
+            exit 1
+          else
+            echo "✅ All tests passed!"
+            exit 0
+          fi
+
+  build-on-success:
+    needs: test
+    runs-on: ubuntu-latest
+    name: 🔨 Build Artifacts (on successful tests)
+    if: success()
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+      
+      - name: 🏗️ Build JAR
+        run: mvn clean package -DskipTests -B
+      
+      - name: 📦 Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: target/*.jar
+          retention-days: 30
+      
+      - name: ✅ Build successful
+        run: echo "Build completed successfully!"

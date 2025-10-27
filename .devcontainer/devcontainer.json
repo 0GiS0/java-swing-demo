@@ -26,7 +26,8 @@
 			"extensions": [
 				"codespaces-Contrib.codeswing",
 				"redhat.java",
-				"cweijan.vscode-mysql-client2"
+				"cweijan.vscode-mysql-client2",
+				"ritwickdey.LiveServer"
 			]
 		}
 	}

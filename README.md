@@ -209,9 +209,181 @@ Los tests incluyen:
 - ✅ Pruebas de operaciones CRUD
 - ✅ Pruebas del modelo de datos
 
+### 🥒 Testing BDD con Cucumber (Branch `cucumber`)
+
+Este proyecto incluye un branch dedicado (`cucumber`) con **testing BDD (Behavior-Driven Development)** usando **Cucumber y Maven**.
+
+#### 📋 Características de Testing BDD
+
+- **Feature Files** - 4 archivos en formato Gherkin (en inglés)
+- **Step Definitions** - Implementación de pasos en Java (~25 métodos)
+- **Maven Integration** - Gestión automática de dependencias
+- **HTML Reports** - Reportes automáticos de ejecución
+
+#### 🎯 Escenarios Cubiertos (15 escenarios)
+
+| Feature | Escenarios | Descripción |
+|---------|-----------|------------|
+| **Talk Proposals** | 4 | CRUD operations de propuestas |
+| **Proposal Approval** | 4 | Workflow de aprobación/rechazo |
+| **Database Connection** | 2 | Conectividad a MySQL |
+| **Data Validation** | 5 | Validación de datos de entrada |
+
+#### 🚀 Ejecutar Tests BDD
+
+En el branch `cucumber`, puedes ejecutar los tests de diferentes formas:
+
+**Opción 1: Ejecutar TODOS los tests (Unit + BDD)**
+```bash
+git checkout cucumber
+mvn clean test
+```
+
+**Opción 2: Ejecutar solo Unit Tests**
+```bash
+mvn clean test -Dtests=unit
+# O con perfil
+mvn clean test -P unit-tests
+```
+
+**Opción 3: Ejecutar solo BDD Tests (Cucumber)**
+```bash
+mvn clean test -Dtests=bdd
+# O con perfil
+mvn clean test -P bdd-tests
+```
+
+**Opción 4: Usar el script automatizado**
+```bash
+# Todos los tests
+./scripts/run-tests.sh --all
+
+# Solo unit tests
+./scripts/run-tests.sh --unit
+
+# Solo BDD tests
+./scripts/run-tests.sh --bdd
+```
+
+**Opción 5: Ejecutar tests Y generar reportes (RECOMENDADO)**
+```bash
+# Ejecutar todos los tests
+mvn clean test
+
+# Generar reportes en HTML y Markdown
+./scripts/create-report-index.sh
+
+# O todo junto
+mvn clean test && ./scripts/create-report-index.sh
+```
+
+#### 📊 Reportes Generados
+
+**Reportes disponibles después de ejecutar tests:**
+
+1. **Dashboard HTML Interactivo**
+   ```
+   target/test-reports/index.html
+   ```
+   - Vista interactiva con estadísticas en tiempo real
+   - Enlace directo a reportes detallados de Cucumber
+   - Información de rama y commit Git
+
+2. **Reporte Markdown**
+   ```
+   target/test-reports/TEST_REPORT.md
+   ```
+   - Resumen ejecutivo en tabla
+   - Estadísticas detalladas de Unit Tests y BDD Tests
+   - Métricas de calidad
+   - Instrucciones de ejecución
+
+3. **Reportes Detallados de Cucumber**
+   ```
+   target/test-reports/cucumber-html-reports/
+   ```
+   - Features report
+   - Steps report
+   - Failures report
+   - Tags report
+
+📖 Para más información sobre reportes, consulta [REPORTING_GUIDE.md](docs/REPORTING_GUIDE.md)
+
+#### 📁 Estructura del Branch Cucumber
+
+```
+cucumber branch/
+├── pom.xml                              # Configuración Maven
+├── src/
+│   ├── main/java/
+│   │   ├── CallForPaperApp.java
+│   │   ├── DatabaseConnection.java
+│   │   ├── ProposalDAO.java
+│   │   ├── TalkProposal.java
+│   │   └── CucumberCLI.java
+│   └── test/
+│       ├── java/
+│       │   ├── TalkProposalSteps.java
+│       │   ├── ProposalApprovalSteps.java
+│       │   ├── DatabaseConnectionSteps.java
+│       │   ├── DataValidationSteps.java
+│       │   └── CucumberRunnerTest.java
+│       └── resources/features/
+│           ├── talk_proposals.feature
+│           ├── proposal_approval.feature
+│           ├── database_connection.feature
+│           └── data_validation.feature
+└── docs/                                # Documentación detallada
+    ├── CUCUMBER.md
+    ├── RUN_TESTS.md
+    └── REPORTING_GUIDE.md
+```
+
+#### 📊 Dependencias Principales (Maven)
+
+```xml
+<!-- Cucumber BDD Framework -->
+<dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-java</artifactId>
+    <version>4.8.1</version>
+</dependency>
+
+<!-- JUnit for test runners -->
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.13.2</version>
+    <scope>test</scope>
+</dependency>
+
+<!-- Mockito for testing -->
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+    <version>4.8.0</version>
+    <scope>test</scope>
+</dependency>
+```
+
+#### 🔄 Diferencias: `main` vs `cucumber`
+
+| Aspecto | main | cucumber |
+|--------|------|----------|
+| **Build Tool** | Scripts bash | Maven |
+| **Test Framework** | JUnit básico | JUnit + Cucumber BDD |
+| **Feature Files** | N/A | 4 feature files (Gherkin) |
+| **Structure** | No estándar | Maven estándar |
+| **Reports** | N/A | HTML reports automáticos |
+
+📖 Para más información detallada, consulta [CUCUMBER.md](docs/CUCUMBER.md)
+
 ## 📚 Documentación Adicional
 
-Para más información técnica detallada sobre la implementación JDBC y arquitectura, consulta el archivo [JDBC_GUIDE.md](JDBC_GUIDE.md).
+Para más información detallada, consulta los archivos de documentación en la carpeta `docs/`:
+- 🥒 [CUCUMBER.md](docs/CUCUMBER.md) - Guía completa de testing BDD
+- 🧪 [RUN_TESTS.md](docs/RUN_TESTS.md) - Formas de ejecutar tests
+- 📊 [REPORTING_GUIDE.md](docs/REPORTING_GUIDE.md) - Información sobre reportes
 
 ## 💡 Solución de Problemas
 
@@ -231,13 +403,59 @@ Para más información técnica detallada sobre la implementación JDBC y arquit
 - Asegúrate de que el servicio de MySQL en el contenedor ha iniciado correctamente
 - Intenta reiniciar el Dev Container
 
-### Scripts no tienen permisos de ejecución
+## 🚀 Integración Continua (CI/CD)
 
-```bash
-chmod +x *.sh
+Este proyecto incluye un **workflow automático de GitHub Actions** que ejecuta tests y genera reportes en cada push o pull request.
+
+### 🔄 Flujo Automático
+
+```
+Push/PR → Tests (Unit + BDD) → Generar Reportes → Build Artifacts
 ```
 
-## 🏗️ Stack Tecnológico
+### 📊 Workflow: `.github/workflows/test-and-report.yml`
+
+**Ejecuta automáticamente:**
+1. ✅ **Unit Tests** - JUnit con Maven
+2. 🥒 **BDD Tests** - Cucumber con Maven
+3. 📊 **Genera Reportes**:
+   - Dashboard HTML interactivo
+   - Reporte Markdown
+   - Reportes detallados de Cucumber
+4. 📦 **Carga Artefactos** - Para consulta posterior
+5. 💬 **Comenta en PRs** - Con resumen de resultados
+
+### 🔍 Resultados de Tests en CI/CD
+
+Los reportes se guardan como artefactos en GitHub Actions:
+- `test-reports/` - Dashboard y Markdown
+- `surefire-reports/` - Reportes XML de JUnit
+- `cucumber-reports/` - Reportes JSON de Cucumber
+
+**Para ver los reportes:**
+1. Abre la PR o el workflow en GitHub
+2. Ve a la pestaña "Actions"
+3. Selecciona el workflow "🧪 Test and Report"
+4. Descarga los artefactos de la sección "Artifacts"
+
+### ⚙️ Configuración del Workflow
+
+El workflow se ejecuta en:
+- ✅ **Push** a `main`, `cucumber`, `develop`
+- ✅ **Pull Requests** a `main`, `cucumber`, `develop`
+- ✅ **Manual** - usando `workflow_dispatch`
+
+### 🛑 Fallos de Tests
+
+Si algún test falla:
+- ❌ El workflow marcará el build como **fallido**
+- 📝 Los reportes se guardan de todas formas
+- 💬 Se comenta en la PR con los resultados
+- 🔗 Los artefactos permanecen 30 días para revisar
+
+---
+
+
 
 | Componente | Versión | Propósito |
 |-----------|---------|----------|
